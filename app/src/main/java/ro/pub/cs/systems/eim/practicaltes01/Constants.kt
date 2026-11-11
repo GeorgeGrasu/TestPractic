@@ -10,6 +10,8 @@ object Constants {
     const val EXTRA_DATETIME = "datetime"
 
     const val STATE_SCOR = "state_scor"
+
+    const val BROADCAST_ACTION = "ro.pub.cs.systems.eim.practicaltest01var05.broadcast"
     const val STATE_LAST_PLAY = "state_last_play"
 
     const val ACTION_VICTORY = "ro.pub.cs.systems.eim.practicaltest01var06.VICTORY"

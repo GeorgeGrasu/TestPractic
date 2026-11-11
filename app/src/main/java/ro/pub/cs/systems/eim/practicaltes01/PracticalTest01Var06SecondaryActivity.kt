@@ -15,7 +15,6 @@ class PracticalTest01Var06SecondaryActivity : AppCompatActivity() {
         val numbers = intent.getStringArrayExtra(Constants.EXTRA_NUMBERS) ?: emptyArray()
         val checked = intent.getIntExtra(Constants.EXTRA_CHECKED, 0)
 
-        // '*' este joker: numerele sunt "la fel" daca valorile non-'*' sunt toate identice
         val allEqual = numbers.filter { it != "*" }.toSet().size <= 1
 
         val gained = if (allEqual) {
@@ -24,7 +23,6 @@ class PracticalTest01Var06SecondaryActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.tvGained).text = if (allEqual) "Gained: $gained" else ""
 
-        // setat din start, ca sa functioneze si la butonul Back
         setResult(RESULT_OK, Intent().putExtra(Constants.EXTRA_GAINED, gained))
 
         findViewById<Button>(R.id.btnOk).setOnClickListener { finish() }

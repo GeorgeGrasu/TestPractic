@@ -19,7 +19,6 @@ class PracticalTest01Var06Service : Service() {
         val scor = intent?.getIntExtra(Constants.EXTRA_SCOR, 0) ?: 0
 
         if (scor > Constants.VICTORY_THRESHOLD) {
-            // dupa 2 secunde de la receptia comenzii
             handler.postDelayed({
                 val dateTime = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault()).format(Date())
                 sendBroadcast(

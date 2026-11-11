@@ -29,7 +29,6 @@
             android:layout_weight="1" />
     </LinearLayout>
 
-    <!-- linia 3: butonul Play, centrat pe orizontala -->
     <Button
         android:id="@+id/btnPlay"
         android:layout_width="wrap_content"

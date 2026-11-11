@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -18,13 +19,13 @@ class PracticalTest01Var06MainActivity : AppCompatActivity() {
     private lateinit var numbers: List<EditText>
     private lateinit var checks: List<CheckBox>
 
-    // C.1 - scorul NU este atasat niciunui control grafic
     private var scor = 0
+    private val intentFilter = IntentFilter(Constants.BROADCAST_ACTION)
     private var serviceStarted = false
-    // C.2 b) - configuratia ultimului "Play"
     private var lastPlayKey: String? = null
 
-    // C.1 - primim castigul de la a doua activitate
+    private val messageBroadcastReceiver = MessageBroadcastReceiver()
+
     private val secondaryLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -34,7 +35,6 @@ class PracticalTest01Var06MainActivity : AppCompatActivity() {
             notifyService()
         }
 
-    // D.2 - receiver pentru mesajele de difuzare
     private val victoryReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val dateTime = intent.getStringExtra(Constants.EXTRA_DATETIME)
@@ -58,11 +58,10 @@ class PracticalTest01Var06MainActivity : AppCompatActivity() {
         )
     }
 
-    // B.1
+
     private fun onPlay() {
         val values = (0..2).map { i ->
             val current = numbers[i].text.toString().trim()
-            // checkbox bifat -> pastram valoarea din camp; nebifat -> o suprascriem cu random
             if (checks[i].isChecked && current.isNotEmpty()) current else Constants.SYMBOLS.random()
         }
         values.forEachIndexed { i, v -> numbers[i].setText(v) }
@@ -70,7 +69,6 @@ class PracticalTest01Var06MainActivity : AppCompatActivity() {
 
         Toast.makeText(this, values.joinToString(" "), Toast.LENGTH_SHORT).show()
 
-        // C.2 b) - aceeasi configuratie ca la ultimul Play => afisam direct scorul pastrat
         val key = values.joinToString(",") + "|" + checked
         if (key == lastPlayKey) {
             Toast.makeText(this, "Scor: $scor", Toast.LENGTH_SHORT).show()
@@ -78,14 +76,12 @@ class PracticalTest01Var06MainActivity : AppCompatActivity() {
         }
         lastPlayKey = key
 
-        // B.2 - intent explicit catre a doua activitate
         val intent = Intent(this, PracticalTest01Var06SecondaryActivity::class.java)
             .putExtra(Constants.EXTRA_NUMBERS, values.toTypedArray())
             .putExtra(Constants.EXTRA_CHECKED, checked)
         secondaryLauncher.launch(intent)
     }
 
-    // D.1 b) pornire la primul scor > 0; D.1 a) notificare cand scor > 300
     private fun notifyService() {
         if ((scor > 0 && !serviceStarted) || scor > Constants.VICTORY_THRESHOLD) {
             startService(
@@ -96,22 +92,41 @@ class PracticalTest01Var06MainActivity : AppCompatActivity() {
         }
     }
 
-    // C.2 a) - salvare/restaurare scor la distrugerea activitatii de catre sistem
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(Constants.STATE_SCOR, scor)
         outState.putString(Constants.STATE_LAST_PLAY, lastPlayKey)
     }
 
+
+
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         scor = savedInstanceState.getInt(Constants.STATE_SCOR, 0)
         lastPlayKey = savedInstanceState.getString(Constants.STATE_LAST_PLAY)
         Toast.makeText(this, "Scor restaurat: $scor", Toast.LENGTH_SHORT).show()
-        notifyService() // serviciul a fost oprit in onDestroy, il repornim daca scor > 0
+        notifyService()
     }
 
-    // D.1 b) - serviciul se opreste cand activitatea principala e distrusa
+    private inner class MessageBroadcastReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val message = intent?.getStringExtra(Constants.EXTRA_DATETIME) ?: ""
+            Log.d("UN TAG UN TAG UN TAG", message)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ContextCompat.registerReceiver(
+            this, messageBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_EXPORTED
+        )
+    }
+
+    override fun onPause() {
+        unregisterReceiver(messageBroadcastReceiver)
+        super.onPause()
+    }
+
     override fun onDestroy() {
         unregisterReceiver(victoryReceiver)
         stopService(Intent(this, PracticalTest01Var06Service::class.java))
