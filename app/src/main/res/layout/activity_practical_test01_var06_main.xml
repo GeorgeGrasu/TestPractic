@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="40dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText android:id="@+id/et1" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:inputType="text" android:gravity="center" />
+        <EditText android:id="@+id/et2" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:inputType="text" android:gravity="center" />
+        <EditText android:id="@+id/et3" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:inputType="text" android:gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <CheckBox android:id="@+id/cb1" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <CheckBox android:id="@+id/cb2" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <CheckBox android:id="@+id/cb3" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <!-- linia 3: butonul Play, centrat pe orizontala -->
+    <Button
+        android:id="@+id/btnPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Play" />
+</LinearLayout>
